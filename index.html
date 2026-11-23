@@ -214,6 +214,7 @@ tbody th{font:400 .8125rem/1.5 var(--mono);color:var(--soft);width:14%}
 .real td b{font:500 1.125rem/1.25 var(--serif)}
 .real td:last-child{width:26%}
 .real a{display:block;margin-bottom:4px}
+.att td b{font:500 1.125rem/1.25 var(--serif)}
 
 /* Errores, lecturas, ruta */
 .reads{padding-left:0;list-style:none;counter-reset:r;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:0 48px}
@@ -339,6 +340,18 @@ table{font-size:.875rem}
 </div>
 <p class="meta" style="margin-top:18px">Derrida: puede probarse que algo es falso; que alguien mintió, no en sentido estricto.</p>
 </div>
+</div>
+</section>
+
+<section class="band alt">
+<div class="wrap">
+<h2 class="rv">Cuatro actitudes ante la verdad</h2>
+<p>Mentira, bullshit, autoengaño y razón cínica se distinguen con dos preguntas: si ocurren en lo que se dice a otros o en lo que uno cree, y si quien las tiene mira la verdad o no la mira.</p>
+<div class="scroll"><table class="stack att" id="att">
+<thead><tr><th>Actitud</th><th>Dónde ocurre</th><th>¿Mira la verdad?</th><th>Qué hace</th><th>Ejemplo</th><th>Fuente</th></tr></thead>
+<tbody></tbody>
+</table></div>
+<p class="meta" style="margin-top:14px">El «autoengaño consciente» no tiene casilla propia: si hay conciencia plena, ya no es autoengaño. Es bullshit cuando se trata de lo que se dice o se comparte, y razón cínica cuando se trata de lo que se sigue creyendo y haciendo.</p>
 </div>
 </section>
 
@@ -583,6 +596,14 @@ CB.innerHTML=CASES.map((c,i)=>`<article class="case"><span class="meta">${esc(c.
 CB.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.c!==undefined){const a=document.getElementById('an'+b.dataset.c);a.hidden=!a.hidden;b.textContent=a.hidden?'Ver análisis':'Ocultar análisis';b.setAttribute('aria-expanded',String(!a.hidden))}else if(b.dataset.go){jump(b.dataset.go)}});
 document.querySelector('#real tbody').innerHTML=REAL.map(r=>`<tr><td data-l="Fecha">${esc(r.f)}</td><td data-l="Caso"><b>${esc(r.t)}</b></td><td data-l="Qué pasó">${mk(r.s)}</td><td data-l="Dónde comprobarlo">${r.l.map(an).join('')}<div class="goto">${r.st.map(id=>`<button data-go="${id}" style="--c:${col(S[byId[id]].l)}">${esc(S[byId[id]].t)}</button>`).join('')}</div></td></tr>`).join('');
 document.getElementById('real').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.go)jump(b.dataset.go)});
+const ATT=[
+ ['Mentira','Al hablar con otros','Sí: cree que lo cierto es otra cosa','Afirma lo que cree falso para que el otro lo tome por verdadero. Cuentan su creencia y su intención, no que lo dicho sea falso.','Asegurar que el informe ya se envió, creyendo que no.','Mahon, SEP (2008)','falsedad'],
+ ['Bullshit','Al hablar o al compartir','No: le es indiferente','Habla sin atender a si lo dicho es verdadero o falso; busca un efecto, no acertar.','«Está científicamente comprobado», dicho sin saber si existe tal estudio.','Frankfurt, «On Bullshit» (1986; libro, 2005)','bullshit'],
+ ['Autoengaño','En lo que uno cree','No: el deseo sesga la evidencia','Termina creyendo lo que desea porque trata la evidencia de forma sesgada. No necesita proponérselo ni saberlo.','Tras una ruptura, leer un «puede ser» como señal de que todavía hay posibilidad de volver.','Mele, Self-Deception Unmasked (2001)','autoengano'],
+ ['Razón cínica','En lo que uno cree y hace','Sí: la conoce','Sabe que la creencia es falsa o interesada y sigue actuando conforme a ella. Más datos no la corrigen: ya los tiene.','Seguir usando una cifra que se sabe mal calculada porque «es la que funciona».','Sloterdijk, Crítica de la razón cínica (1983)','cinica']];
+const AB=document.getElementById('att');
+AB.querySelector('tbody').innerHTML=ATT.map(r=>`<tr><td data-l="Actitud"><b>${esc(r[0])}</b></td><td data-l="Dónde ocurre">${esc(r[1])}</td><td data-l="¿Mira la verdad?">${esc(r[2])}</td><td data-l="Qué hace">${mk(r[3])}</td><td data-l="Ejemplo">${mk(r[4])}</td><td data-l="Fuente"><span class="src">${esc(r[5])}</span><div class="goto"><button data-go="${r[6]}" style="--c:${col(S[byId[r[6]]].l)}">${esc(S[byId[r[6]]].t)}</button></div></td></tr>`).join('');
+AB.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.go)jump(b.dataset.go)});
 document.querySelector('#cmp tbody').innerHTML=CMP.map(r=>`<tr><th>${esc(r[0])}</th>${r.slice(1).map((c,j)=>`<td class="c${j+1}" data-l="${['Salida 1','Salida 2','Línea de Arendt'][j]}">${mk(c)}</td>`).join('')}</tr>`).join('');
 
 const hi=document.getElementById('hi');
