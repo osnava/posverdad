@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa de la posverdad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* VOICE editorial study guide: calm, exact, the accent only where something is unverified, interpreted or a trap
+   IDEA an annotated transit map, as an editor marks a proof: ink for facts, one marker for what must be checked
+   PICTURE the network map; facts run on the ink line, the two exits in two muted inks
+   COLOUR paper #FAFAF7, surface #F0EFEA, ink #1A1A18, soft ink #66645E, marker #E9C53A; semantic: repliegue #8A3B3B, apertura #2F5E8F
+   TYPE Newsreader for titles and quotes, IBM Plex Sans for reading, IBM Plex Mono for sources and data
+   LAYOUT laptop: map + sticky panel, long sections at 68ch with wide margins; phone: map scrolls, panel continues the reading */
+:root{color-scheme:light dark;
+--bg:light-dark(#FAFAF7,#121211);--surface:light-dark(#F0EFEA,#1C1C1A);--ink:light-dark(#1A1A18,#ECEBE6);--soft:light-dark(#66645E,#9C9A93);--accent:light-dark(#E9C53A,#D9B93F);--on-accent:#1A1A18;
+--rep:light-dark(#8A3B3B,#D98A84);--ape:light-dark(#2F5E8F,#86ADD9);
+--rule:color-mix(in srgb,var(--ink) 14%,transparent);--grid:color-mix(in srgb,var(--ink) 5%,transparent);
+--serif:Newsreader,Georgia,serif;--sans:'IBM Plex Sans',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,monospace;
+--ease:cubic-bezier(.2,.7,.2,1);--ease-io:cubic-bezier(.65,0,.35,1);--t-fast:160ms;--t-mid:420ms;--t-slow:700ms}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:24px}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1.0625rem/1.6 var(--sans);overflow-x:clip;-webkit-font-smoothing:antialiased}
+.band{padding:clamp(56px,8vw,120px) max(5vw,16px)}
+.wrap{max-width:1280px;margin:0 auto}
+h1,h2{font-family:var(--serif);font-weight:500;letter-spacing:-.02em;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.5rem,5vw,4rem);line-height:1.02}
+h2{font-size:clamp(1.75rem,2.6vw,2.25rem);line-height:1.1;margin-bottom:.6em;position:relative;padding-bottom:.35em}
+h2::after{content:"";position:absolute;left:0;bottom:0;width:3.5rem;height:1px;background:var(--ink);transform-origin:left}
+.js h2.rv::after{transform:scaleX(0);transition:transform var(--t-slow) var(--ease)}
+.js h2.rv.in::after{transform:scaleX(1)}
+h3{font:600 1.125rem/1.3 var(--sans);margin:0 0 .4em}
+p{margin:0 0 1em;max-width:68ch}
+.lede{font-size:1.1875rem;color:var(--soft);max-width:58ch}
+.meta{font:400 .8125rem/1.5 var(--mono);color:var(--soft)}
+a{color:inherit;text-decoration:underline 1px solid;text-underline-offset:.2em}
+a:hover{text-decoration-thickness:2px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+
+/* Marcas de lectura: el subrayado significa algo */
+.hecho{text-decoration:underline 1px solid var(--ink);text-underline-offset:.22em}
+.interp{text-decoration:underline 1.5px dotted var(--soft);text-underline-offset:.25em}
+.emo{text-decoration:underline 1px wavy var(--soft);text-underline-offset:.3em;text-decoration-skip-ink:none}
+.trap{background:linear-gradient(transparent 58%,var(--accent) 58%,var(--accent) 92%,transparent 92%);color:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.cita{font-family:var(--serif);font-style:italic;font-size:1.06em}
+.src{font:400 .8125rem/1.5 var(--mono);color:var(--soft)}
+
+/* Hero con grano */
+.hero{position:relative;isolation:isolate;padding-bottom:clamp(32px,4vw,56px)}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.045;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root[data-theme=dark] .hero::before{opacity:.06}
+.herogrid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:clamp(24px,5vw,72px);align-items:end}
+.hero h1{margin-bottom:.35em}
+.marks{border-top:1px solid var(--ink);padding-top:14px}
+.marks dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;margin:8px 0 0;font-size:.9375rem}
+.marks dt{white-space:nowrap}
+.marks dd{margin:0;color:var(--soft)}
+
+/* Filtros de línea */
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:clamp(24px,3vw,36px)}
+.chip{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 14px;border:1px solid var(--rule);border-radius:2px;background:transparent;font:500 .9375rem var(--sans);cursor:pointer;transition:border-color var(--t-fast) var(--ease),background var(--t-fast) var(--ease)}
+.chip:hover{border-color:var(--ink)}
+.chip i{width:24px;height:0;border-top:4px solid var(--c);display:block}
+.chip i.dash{border-top-style:dashed}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-pressed=true] i{border-top-color:currentColor}
+
+/* Mapa y panel */
+.stage{padding-top:0}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;grid-template-areas:'map panel' 'steps panel';gap:32px 48px;align-items:start}
+.mapcol{grid-area:map}
+.mapbox{overflow-x:auto;border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+#map{display:block;width:100%;min-width:880px;height:auto}
+#map text{paint-order:stroke;stroke:var(--bg);stroke-width:5px;stroke-linejoin:round;fill:var(--ink);font-family:var(--sans)}
+.ln{fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;transition:opacity var(--t-mid) var(--ease)}
+.st{cursor:pointer;transition:opacity var(--t-mid) var(--ease)}
+.st circle.o{fill:var(--bg);stroke-width:3.5;transition:stroke-width var(--t-fast) var(--ease)}
+.st:hover circle.o{stroke-width:5}
+.st .dot{opacity:0;transition:opacity var(--t-fast)}
+.st.seen .dot{opacity:1}
+.st.sel circle.o{stroke-width:6}
+.st.sel text.nm{font-weight:600;text-decoration:underline;text-underline-offset:4px}
+.st:focus-visible{outline:none}
+.st:focus-visible circle.o{stroke-width:6}
+.flag{fill:var(--accent);stroke:var(--bg);stroke-width:2}
+.dim .ln,.dim .st,.dim .xl{opacity:.14}
+.dim .ln.on,.dim .st.on{opacity:1}
+#tok{transition:transform var(--t-slow) var(--ease-io)}
+.hint{margin:10px 0 0}
+.panel{grid-area:panel;position:sticky;top:20px;background:var(--surface);padding:28px 28px 24px;border-top:3px solid var(--c,var(--ink))}
+.panel .meta{display:block;margin-bottom:10px}
+.panel h2{font-size:1.875rem;padding:0;margin-bottom:.5em}
+.panel h2::after{display:none}
+.panel p{font-size:1rem}
+.panel ul{list-style:none;margin:0 0 18px;padding:0}
+.panel li{margin:0 0 4px}
+.panel li::before{content:"— ";color:var(--soft)}
+.blk{margin:0 0 18px;padding:2px 0 2px 16px;border-left:2px solid var(--rule);font-size:1rem}
+.blk .meta{margin-bottom:4px}
+.blk.trapbox{border-left:4px solid var(--accent)}
+.blk.trapbox .meta{display:inline-block;background:var(--accent);color:var(--on-accent);padding:0 6px}
+.qa{border-top:1px solid var(--rule);padding-top:14px;margin-bottom:18px}
+.qa p{margin:.6em 0 0}
+.qa .btn{display:block}
+.btn{min-height:44px;padding:0 18px;border-radius:2px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font:500 .9375rem var(--sans);cursor:pointer;transition:background var(--t-fast) var(--ease),color var(--t-fast) var(--ease)}
+.btn:hover{background:transparent;color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--bg)}
+.btn.small{min-height:36px;padding:0 12px;font-size:.875rem;margin-top:10px}
+.nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.meter{flex:1 1 120px;height:2px;background:var(--rule)}
+.meter span{display:block;height:100%;background:var(--ink);transition:width var(--t-mid) var(--ease)}
+.count{white-space:nowrap}
+.steps{grid-area:steps}
+.steps ol{list-style:none;counter-reset:n;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:0;border-top:1px solid var(--rule)}
+.steps li{counter-increment:n;padding:18px 20px 18px 0;border-bottom:1px solid var(--rule);font-size:.9375rem;color:var(--soft)}
+.steps li::before{content:counter(n,decimal-leading-zero);display:block;font:500 .8125rem var(--mono);color:var(--ink);margin-bottom:6px}
+.steps b{display:block;color:var(--ink);font-weight:600;font-size:1rem}
+
+/* Andamiaje para secciones de datos */
+.scaffold{background-color:var(--bg);background-image:linear-gradient(to right,var(--grid) 1px,transparent 1px),linear-gradient(to bottom,var(--grid) 1px,transparent 1px);background-size:24px 24px}
+.alt{background-color:var(--surface)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,96px);align-items:start}
+
+/* Componente: hecho / interpretación */
+.hi{margin:28px 0 0;background:var(--bg);border-top:1px solid var(--ink);padding:24px 0 0}
+.hi-toggle{display:inline-flex;border:1px solid var(--ink);border-radius:2px;margin-bottom:24px}
+.hi-toggle button{min-height:40px;padding:0 16px;border:0;background:transparent;cursor:pointer;font:500 .875rem var(--sans)}
+.hi-toggle button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.hi-stage{position:relative;min-height:12.5rem;padding:8px 0 0}
+.hi-text{position:relative;z-index:1;margin:0;font:400 clamp(1.25rem,2vw,1.5rem)/1.45 var(--serif);max-width:34ch;transition:opacity var(--t-mid) var(--ease),filter var(--t-mid) var(--ease)}
+.hi-layer{position:absolute;left:0;top:8px;margin:0;font:italic 400 clamp(1.125rem,1.8vw,1.3125rem)/1.35 var(--serif);opacity:0;pointer-events:none;transform:translate(0,0);transition:opacity var(--t-mid) var(--ease),transform 520ms var(--ease)}
+.hi-src{margin-top:18px;transition:opacity var(--t-mid) var(--ease)}
+.hi-src.alt-src{position:absolute;opacity:0}
+.hi[data-mode=interp] .hi-text{opacity:.12;filter:blur(.6px)}
+.hi[data-mode=interp] .hi-layer{opacity:var(--o)}
+.hi[data-mode=interp] .l1{transform:translate(0,-.15em) rotate(-.6deg);transition-delay:0ms}
+.hi[data-mode=interp] .l2{transform:translate(18px,1.95em) rotate(.4deg);transition-delay:60ms}
+.hi[data-mode=interp] .l3{transform:translate(4px,4.05em) rotate(-.3deg);transition-delay:120ms}
+.hi[data-mode=interp] .l4{transform:translate(26px,6.15em) rotate(.5deg);transition-delay:180ms}
+.hi[data-mode=interp] .fact-src{opacity:0}
+.hi[data-mode=interp] .alt-src{position:static;opacity:1}
+.hi[data-mode=interp] .hi-stage{min-height:13.5rem}
+.l1{--o:.85}.l2{--o:.6}.l3{--o:.48}.l4{--o:.36}
+
+/* Cuatro casillas */
+.quad{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1fr);border-top:1px solid var(--ink);font-size:.9375rem}
+.quad>div{padding:14px 16px 14px 0;border-bottom:1px solid var(--rule)}
+.quad .h,.quad .v{color:var(--soft);font:400 .8125rem/1.4 var(--mono)}
+.quad b{display:block;font:500 1.125rem var(--serif)}
+.outside{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:20px;font-size:.9375rem}
+.outside b{display:block;font:500 1.125rem var(--serif)}
+
+/* Componente: el 1% */
+.scene{border-top:1px solid var(--ink);padding-top:20px}
+.one{display:grid;gap:8px}
+.one-frag{justify-self:start;display:inline-flex;align-items:baseline;gap:12px;border:0;background:none;padding:0;cursor:pointer;text-align:left}
+.one-frag .pct{font:500 .8125rem var(--mono);color:var(--soft)}
+.one-frag q{font:italic 500 clamp(2rem,4vw,3rem)/1 var(--serif);quotes:"«" "»";transition:transform var(--t-mid) var(--ease);transform-origin:left center}
+.one-frag q span{background:linear-gradient(transparent 62%,var(--accent) 62%,var(--accent) 90%,transparent 90%)}
+.one-frag:hover q{transform:translateX(4px)}
+.one-ctx{display:grid;grid-template-rows:0fr;transition:grid-template-rows 480ms var(--ease)}
+.one-ctx>div{overflow:hidden}
+.one-ctx p{opacity:0;transform:translateY(-6px);transition:opacity 320ms var(--ease) 120ms,transform 320ms var(--ease) 120ms;margin:12px 0 0}
+.one.open .one-ctx{grid-template-rows:1fr}
+.one.open .one-ctx p{opacity:1;transform:none}
+.one.open .one-frag q{transform:scale(.82)}
+.one .faint{color:var(--soft)}
+
+/* Componente: costuras */
+.seams{position:relative;padding:22px 0 0}
+.take{position:relative;padding:12px 0;transition:padding var(--t-mid) var(--ease)}
+.take p{margin:0;font:400 1.125rem/1.55 var(--serif);max-width:44ch}
+.take .lbl{position:absolute;right:0;top:12px;font:400 .75rem var(--mono);color:var(--soft);opacity:0;transition:opacity var(--t-mid) var(--ease)}
+.take svg{position:absolute;right:0;bottom:12px;width:26px;height:26px;opacity:0;transition:opacity var(--t-mid) var(--ease)}
+.take+.take{border-top:1px dashed transparent;transition:border-color var(--t-mid) var(--ease),padding var(--t-mid) var(--ease)}
+.crop{position:absolute;width:14px;height:14px;opacity:0;transition:opacity var(--t-mid) var(--ease);border-color:var(--soft);border-style:solid;border-width:0}
+.crop.tl{top:6px;left:-10px;border-top-width:1px;border-left-width:1px}
+.crop.tr{top:6px;right:-10px;border-top-width:1px;border-right-width:1px}
+.crop.bl{bottom:-4px;left:-10px;border-bottom-width:1px;border-left-width:1px}
+.crop.br{bottom:-4px;right:-10px;border-bottom-width:1px;border-right-width:1px}
+.seams:hover .take,.seams:focus-within .take,.seams.open .take{padding:16px 40px 16px 0}
+.seams:hover .take+.take,.seams:focus-within .take+.take,.seams.open .take+.take{border-top-color:var(--soft)}
+.seams:hover .lbl,.seams:hover svg,.seams:hover .crop,.seams:focus-within .lbl,.seams:focus-within svg,.seams:focus-within .crop,.seams.open .lbl,.seams.open svg,.seams.open .crop{opacity:1}
+
+/* Tabla comparativa */
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.9375rem}
+th,td{text-align:left;vertical-align:top;padding:14px 18px 14px 0;border-bottom:1px solid var(--rule)}
+thead th{font:500 1.125rem var(--serif);border-bottom:2px solid var(--c,var(--ink))}
+tbody th{font:400 .8125rem/1.5 var(--mono);color:var(--soft);width:14%}
+.c1{--c:var(--rep)}.c2{--c:var(--ape)}.c3{--c:var(--ink)}
+
+/* Casos */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:0 clamp(24px,3vw,48px)}
+.case{padding:24px 0 28px;border-top:1px solid var(--ink);display:flex;flex-direction:column}
+.case h3{font:500 1.5rem/1.2 var(--serif);margin:6px 0 10px}
+.case .q{font-weight:600}
+.case .btn{align-self:start}
+.an{margin-top:12px;padding-left:16px;border-left:2px solid var(--rule)}
+.goto{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.goto button{min-height:36px;padding:0 10px;border:1px solid var(--rule);border-left:4px solid var(--c);border-radius:2px;background:transparent;font:400 .8125rem var(--sans);cursor:pointer;transition:border-color var(--t-fast) var(--ease)}
+.goto button:hover{border-color:var(--ink);border-left-color:var(--c)}
+
+/* Fuentes enlazadas y casos reales */
+.links{margin:0 0 18px;padding:0;list-style:none}
+.links li{margin:0 0 6px;font:400 .8125rem/1.5 var(--mono)}
+.links li::before{content:none}
+.links a,.srcs a,.real a{font:400 .8125rem/1.5 var(--mono);color:var(--ink);text-decoration:underline 1px solid var(--ink);text-underline-offset:.22em}
+.srcs{margin:4px 0 12px;color:var(--soft);font:400 .8125rem/1.6 var(--mono)}
+.real td:first-child{white-space:nowrap;font:400 .8125rem/1.5 var(--mono);color:var(--soft);width:11%}
+.real td b{font:500 1.125rem/1.25 var(--serif)}
+.real td:last-child{width:26%}
+.real a{display:block;margin-bottom:4px}
+
+/* Errores, lecturas, ruta */
+.errs{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:0 48px}
+.errs li{padding:16px 0;border-bottom:1px solid var(--rule)}
+.errs .said{display:block;margin-bottom:6px}
+.reads{padding-left:0;list-style:none;counter-reset:r;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:0 48px}
+.reads li{counter-increment:r;padding:14px 0 14px 2.4rem;border-bottom:1px solid var(--rule);position:relative;font-size:.9375rem}
+.reads li::before{content:counter(r,decimal-leading-zero);position:absolute;left:0;top:15px;font:500 .8125rem var(--mono);color:var(--soft)}
+.route{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:0 32px}
+.route li{padding:18px 0;border-top:1px solid var(--rule);font-size:.9375rem}
+.route li.done{border-top:3px solid var(--ink)}
+.route b{display:block;font:500 1.25rem var(--serif);margin:4px 0}
+footer{color:var(--soft)}
+
+@media(max-width:1100px){
+.grid{grid-template-columns:minmax(0,1fr);grid-template-areas:'map' 'panel' 'steps';gap:32px}
+.panel{position:static;background:transparent;padding:28px 0 0;border-top:1px solid var(--ink)}
+.panel h2{font-size:2rem}
+.panel p{font-size:1.0625rem}
+.herogrid,.split{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:600px){
+table{font-size:.875rem}
+.stack thead{display:none}.stack tr{display:grid;padding:12px 0;border-bottom:1px solid var(--rule)}.stack th,.stack td{border:0;padding:4px 0;width:auto}
+.stack td::before{content:attr(data-l);display:block;font:500 .8125rem var(--mono);color:var(--c)}
+.quad{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.quad .v{grid-column:1/-1;border-bottom:0;padding-bottom:0}.quad .corner{display:none}
+.outside{grid-template-columns:minmax(0,1fr)}
+.hi[data-mode=interp] .hi-stage{min-height:15rem}
+.take .lbl{position:static;display:block;margin-bottom:4px}
+.seams:hover .take,.seams:focus-within .take,.seams.open .take{padding:14px 34px 14px 0}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:1ms!important;transition-delay:0ms!important}}
+/* El mapa mide 860 px como mínimo. La columna debe contenerlo entero en las pantallas de escritorio
+   más comunes (1366, 1440, 1536, 1600 y 1920 px, contando la barra de desplazamiento de Windows);
+   antes quedaban cortas hasta seis estaciones. Debajo de unos 1350 px, el mapa se desplaza. */
+@media (min-width:1101px){
+ .wrap{max-width:1320px}
+ #map{min-width:860px}
+}
+@media (min-width:1101px) and (max-width:1479px){
+ .grid{grid-template-columns:minmax(0,1fr) 320px;gap:32px 24px}
+}
+/* Entre 1101 y 1200 px la columna no alcanza para el mapa y escondía hasta diez estaciones:
+   se apila el panel bajo el mapa, como ya ocurre debajo de 1100 px. */
+@media (min-width:1101px) and (max-width:1200px){
+ .grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"map" "panel" "steps";gap:32px}
+ .panel{position:static;background:transparent;padding:28px 0 0;border-top:1px solid var(--ink)}
+ .panel h2{font-size:2rem}
+ .panel p{font-size:1.0625rem}
+ .herogrid,.split{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+</head>
+<body>
+<header class="band hero">
+<div class="wrap">
+<div class="herogrid">
+<div>
+<h1>Mapa de la posverdad</h1>
+<p class="lede">Cuando «la verdad ha muerto», el camino se bifurca: el repliegue sobre lo propio o la apertura al otro. Ambas salidas se corrigen en una tercera línea, la de los hechos compartidos. Esta guía reúne todo el estudio: estaciones con evidencia y ejemplos, casos para practicar, casos reales con sus fuentes y lecturas.</p>
+</div>
+<div class="marks" aria-label="Cómo leer las marcas">
+<span class="meta">Cómo leer las marcas</span>
+<dl>
+<dt><span class="hecho">hecho verificado</span></dt><dd>Subrayado continuo, con su fuente en monoespaciada.</dd>
+<dt><span class="interp">interpretación</span></dt><dd>Subrayado de puntos: una lectura legítima, no un dato.</dd>
+<dt><span class="emo">afirmación emotiva</span></dt><dd>Subrayado ondulado: apela a la emoción.</dd>
+<dt><span class="trap">por verificar</span></dt><dd>Marcador: cita fuera de contexto, error o trampa.</dd>
+<dt><span class="cita">«cita textual»</span></dt><dd>Serif cursiva, siempre entre comillas.</dd>
+</dl>
+</div>
+</div>
+<div class="legend" id="legend" role="group" aria-label="Filtrar por línea"></div>
+</div>
+</header>
+
+<main>
+<section class="band stage">
+<div class="wrap grid">
+<div class="mapcol">
+<div class="mapbox"><svg id="map" viewBox="0 115 1200 570" role="img" aria-label="Mapa de líneas: dos orígenes llegan a la posverdad, que se bifurca en dos salidas; ambas desembocan en la línea de los hechos compartidos"></svg></div>
+<p class="hint meta">Seleccione una estación o avance con las flechas del teclado. El punto amarillo señala un error de la conferencia. En pantallas estrechas, el mapa se desplaza hacia los lados.</p>
+</div>
+<aside class="panel" id="panel" aria-live="polite"></aside>
+<div class="steps">
+<h2 class="rv">Cómo estudiar con esta guía</h2>
+<ol>
+<li><b>Recorra el mapa en orden</b>Las 28 estaciones, con «Siguiente estación» o las flechas del teclado.</li>
+<li><b>Responda antes de mirar</b>Conteste cada pregunta de control por escrito y solo después abra la respuesta.</li>
+<li><b>Aplique en los casos</b>Los seis casos obligan a combinar estaciones.</li>
+<li><b>Repase de memoria</b>Reconstruya el mapa a los 1, 3, 7 y 21 días y anote solo lo olvidado.</li>
+<li><b>Verifique las fuentes</b>Nada pasa a las notas sin autor, año y página o DOI.</li>
+</ol>
+</div>
+</div>
+</section>
+
+<section class="band scaffold">
+<div class="wrap split">
+<div>
+<h2 class="rv">Hecho e interpretación</h2>
+<p>Nietzsche escribió que la verdad es <span class="cita">«un ejército móvil de metáforas, metonimias, antropomorfismos»</span> (1873). La conferencia lo cita como <span class="trap">«un ejército de metáforas en estado de combate»</span>, una versión alterada. Alterne el bloque: el mismo asunto, primero como hecho con su fuente y luego como lecturas que compiten.</p>
+<figure class="hi" id="hi" data-mode="fact">
+<div class="hi-toggle" role="group" aria-label="Modo de lectura"><button type="button" aria-pressed="true" data-m="fact">Hecho</button><button type="button" aria-pressed="false" data-m="interp">Interpretación</button></div>
+<div class="hi-stage">
+<p class="hi-text">En 2014, la contribución bruta del Reino Unido a la UE equivalía a unos 350 millones de libras por semana. El reembolso se descontaba antes del pago, de modo que esa cifra nunca se envió completa.</p>
+<p class="hi-layer l1" aria-hidden="true">«Enviamos a la UE 350 millones por semana.»</p>
+<p class="hi-layer l2" aria-hidden="true">«Recuperaremos el control de 350 millones.»</p>
+<p class="hi-layer l3" aria-hidden="true">«Uso claramente indebido de las estadísticas.»</p>
+<p class="hi-layer l4" aria-hidden="true">«Esto es correcto.»</p>
+</div>
+<figcaption class="hi-src fact-src src">Fuente: UK Statistics Authority, <a href="https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2016/04/Letter-from-Sir-Andrew-Dilnot-to-Norman-Lamb-MP-210416.pdf">carta de Sir Andrew Dilnot (21 de abril de 2016)</a> y <a href="https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2017/09/Letter-from-Sir-David-Norgrove-to-Foreign-Secretary.pdf">carta de Sir David Norgrove (17 de septiembre de 2017)</a>.</figcaption>
+<figcaption class="hi-src alt-src src"><span class="trap">Cuatro lecturas en disputa:</span> lema de campaña (2016), artículo de Boris Johnson (2017), carta de la Autoridad Estadística (2017) y una <a href="https://spectator.com/article/the-spectator-s-notes-21-september-2017/">columna de Charles Moore en su defensa (The Spectator, 21 de septiembre de 2017)</a>. Traducciones propias.</figcaption>
+</figure>
+</div>
+<div>
+<h2 class="rv">Cuatro casillas y dos afueras</h2>
+<p>Lo opuesto a la verdad no es la mentira. Verdadero y falso miden lo dicho frente a lo que es; veraz y mendaz, la intención de quien habla.</p>
+<div class="quad" role="table" aria-label="Verdad y veracidad">
+<div class="h corner"></div><div class="h">Lo dicho es verdadero</div><div class="h">Lo dicho es falso</div>
+<div class="v">Quien habla cree lo que dice</div>
+<div><b>Verdad</b>Veraz y acertado.</div>
+<div><b>Falsedad</b>Error de buena fe: Ptolomeo no mentía.</div>
+<div class="v">Quien habla cree lo contrario</div>
+<div><b>Mentira que resultó verdad</b>Quiso engañar y, sin saberlo, dijo algo verdadero. Sigue siendo mentira.</div>
+<div><b>Mentira</b>Cree una cosa y afirma la contraria.</div>
+</div>
+<div class="outside">
+<div><b class="interp">Interpretación</b>Lectura desde un marco previo. No es falsedad ni mentira: puede ser legítima o interesada, y se discute como opinión.</div>
+<div><b>Bullshit</b>Quien habla no atiende a si lo dicho es verdadero o falso (Frankfurt). Queda fuera del cuadro porque no hay intención respecto de la verdad.</div>
+</div>
+<p class="meta" style="margin-top:18px">Derrida: puede probarse que algo es falso; que alguien mintió, no en sentido estricto.</p>
+</div>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap split">
+<div class="scene">
+<h2 class="rv">El 1%</h2>
+<p>El ejemplo de la ruptura en la conferencia: de toda una despedida, quien quiere volver se queda con dos palabras. Pulse el fragmento para ver lo que se dijo.</p>
+<div class="one" id="one">
+<button type="button" class="one-frag" aria-expanded="false" aria-controls="one-ctx"><span class="pct">1%</span><q><span>puede ser</span></q></button>
+<div class="one-ctx" id="one-ctx"><div>
+<p class="faint">—¿Te acordás del atardecer en San Bernardo?</p>
+<p class="faint">—Sí, yo qué sé. Estuvo bueno el atardecer, pero hubiera sido mejor no ir con vos.</p>
+<p>Después, al contarlo: «Me dijo que en San Bernardo, cuando vio el atardecer, <span class="trap">puede ser</span> que estuvo bueno. Así que creo que tengo posibilidad de volver».</p>
+<p class="meta">Un umbral desplazado, no falta de comprensión: la persona entiende el mensaje, pero exige muy poca evidencia para creer lo que desea.</p>
+</div></div>
+</div>
+</div>
+<div class="scene">
+<h2 class="rv">Las costuras</h2>
+<p>El anuncio de la gobernadora Vidal, tal como lo describe la conferencia: una llamada presentada como espontánea. Pase el cursor o pulse el botón para ver las costuras.</p>
+<div class="seams" id="seams" tabindex="0" aria-describedby="seams-note">
+<div class="take"><span class="crop tl"></span><span class="crop tr"></span><p>«Hola, ¿cómo estás? Soy María Eugenia Vidal.» Sobre la mesa, una taza blanca.</p><span class="lbl">toma 1 · cámara A</span><svg viewBox="0 0 26 26" aria-hidden="true"><path d="M5 8h13v9a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M18 10h2a2.5 2.5 0 0 1 0 5h-2" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+<div class="take"><p>Cambia el plano y la conversación con la vecina continúa. La taza, antes blanca, ahora es azul.</p><span class="lbl">toma 2 · cámara B</span><svg viewBox="0 0 26 26" aria-hidden="true" style="color:var(--ape)"><path d="M3 6h16v11a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z" fill="currentColor" stroke="currentColor" stroke-width="1.5"/><path d="M19 9h2.5a3 3 0 0 1 0 6H19" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+<div class="take"><span class="crop bl"></span><span class="crop br"></span><p>Tres cámaras registran la llamada presentada como espontánea; por eso pudo verse el cambio.</p><span class="lbl">toma 3 · cámara C</span><svg viewBox="0 0 26 26" aria-hidden="true"><rect x="3" y="7" width="14" height="12" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M17 11l6-3v10l-6-3z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></div>
+</div>
+<button type="button" class="btn ghost small" id="seams-btn" aria-pressed="false">Ver costuras</button>
+<p class="meta" id="seams-note" style="margin-top:14px">Para la conferencia, el error no importa a los partidarios: se pide que el político actúe bien, no que diga la verdad. El cambio de taza está documentado: <a href="https://www.rosario3.com/noticias/La-taza-que-cambia-de-color-el-error-de-edicion-que-puso-en-evidencia-a-Maria-Eugenia-Vidal-tras-un-llamado-espontaneo---20180903-0014.html">Rosario3, 3 de septiembre de 2018</a>.</p>
+</div>
+</div>
+</section>
+
+<section class="band scaffold">
+<div class="wrap">
+<h2 class="rv">Las dos salidas, en profundidad</h2>
+<p>Ninguna salida basta por sí sola. La primera degenera en una cámara de eco; la segunda, en un relativismo que ya no distingue. La distinción de Arendt entre hechos y opiniones corrige ambas.</p>
+<div class="scroll"><table class="stack" id="cmp">
+<thead><tr><th></th><th class="c1">Salida 1: ensimismarse</th><th class="c2">Salida 2: abrirse al otro</th><th class="c3">Línea de Arendt</th></tr></thead>
+<tbody></tbody>
+</table></div>
+</div>
+</section>
+
+<section class="band scaffold alt">
+<div class="wrap">
+<h2 class="rv">Casos para practicar</h2>
+<p>Cada caso exige combinar varias estaciones. Piense la respuesta antes de abrir el análisis; los botones llevan a las estaciones del mapa.</p>
+<div class="cases" id="cases"></div>
+</div>
+</section>
+
+<section class="band scaffold">
+<div class="wrap">
+<h2 class="rv">Casos reales y dónde comprobarlos</h2>
+<p>Sucesos documentados en prensa o en fuentes oficiales, cada uno con el enlace para verificar lo ocurrido. Los botones llevan a las estaciones que el caso ilustra.</p>
+<div class="scroll"><table class="stack real" id="real">
+<thead><tr><th>Fecha</th><th>Caso</th><th>Qué pasó</th><th>Dónde comprobarlo</th></tr></thead>
+<tbody></tbody>
+</table></div>
+<p class="meta" style="margin-top:14px">Enlaces comprobados el 23 de noviembre de 2026. Los documentos oficiales (PDF) y los DOI suelen ser más estables que las notas de prensa.</p>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap">
+<h2 class="rv">Lo que la conferencia dice mal</h2>
+<p>En marcador, lo que afirma la conferencia; con subrayado continuo, lo que dicen las fuentes.</p>
+<ul class="errs" id="errs"></ul>
+</div>
+</section>
+
+<section class="band alt">
+<div class="wrap">
+<h2 class="rv">Lecturas esenciales</h2>
+<p>En este orden: primero los conceptos, después la evidencia.</p>
+<ol class="reads">
+<li>Frankfurt, H. G., <i>On Bullshit. Sobre la manipulación de la verdad</i> (Paidós, 2006). La distinción con la mentira.</li>
+<li>Arendt, H., «Verdad y política», en <i>Entre el pasado y el futuro</i> (Península). Hechos y opiniones.</li>
+<li>Derrida, J., <i>Historia de la mentira: prolegómenos</i> (1995). La mentira como intención.</li>
+<li>Nietzsche, F., <i>Sobre verdad y mentira en sentido extramoral</i> (1873). La verdad como metáfora olvidada.</li>
+<li>McIntyre, L., <i>Posverdad</i> (Cátedra, 2018). Panorama del concepto.</li>
+<li>Williams, B., <i>Verdad y veracidad</i> (Tusquets, 2006). Exactitud y sinceridad.</li>
+<li>Pennycook, G. y Rand, D. G. (2021), «The Psychology of Fake News». <a class="src" href="https://doi.org/10.1016/j.tics.2021.02.007">doi:10.1016/j.tics.2021.02.007</a></li>
+<li>Sultan, M. et al. (2024), «Susceptibility to online misinformation», PNAS. <a class="src" href="https://doi.org/10.1073/pnas.2409329121">doi:10.1073/pnas.2409329121</a></li>
+</ol>
+</div>
+</section>
+
+<section class="band">
+<div class="wrap">
+<h2 class="rv">Ruta de estudio</h2>
+<ol class="route">
+<li class="done"><span class="meta">Sesión 1 · realizada</span><b>La conferencia</b>Tesis, conceptos, autores y deficiencias de rigor.</li>
+<li><span class="meta">Sesión 2 · pendiente</span><b>Fuentes clásicas</b>Nietzsche, Arendt, Derrida y Aristóteles.</li>
+<li><span class="meta">Sesión 3 · avanzada</span><b>Debate contemporáneo</b>Identidad, desatención, burbujas, intervenciones e IA.</li>
+<li><span class="meta">Sesión 4 · pendiente</span><b>Síntesis</b>Una tesis propia, defendida con este mapa.</li>
+</ol>
+</div>
+</section>
+</main>
+
+<footer class="band" style="padding-top:0"><div class="wrap meta">Basado en el mapa del debate verificado el 23 de noviembre de 2026 (49 referencias con DOI comprobadas en Crossref) y en la conferencia de Darío Sztajnszrajber «La posverdad» (Facultad Libre de Rosario, 2018).</div></footer>
+
+<script>
+{
+document.documentElement.classList.add('js');
+const LINES={clas:{n:'Línea clásica',c:'--soft'},hoy:{n:'Línea hoy',c:'--soft',dash:1},s1:{n:'Salida 1 · repliegue',c:'--rep'},s2:{n:'Salida 2 · apertura',c:'--ape'},ar:{n:'Línea de Arendt · hechos',c:'--ink'}};
+const PATHS=[
+{l:'clas',d:'M40 170H330L430 270V360'},
+{l:'hoy',d:'M40 550H330L430 450V360'},
+{l:'clas',d:'M430 360H590'},
+{l:'s1',d:'M590 360L680 270H1060L1150 180'},
+{l:'s1',d:'M1060 270H1150'},
+{l:'s2',d:'M590 360L680 450H1150'},
+{l:'ar',d:'M1150 450V560L1090 620H540'}];
+const S=[
+{id:'sofistas',l:'clas',x:70,y:170,nm:['Sofistas'],lx:70,ly:144,k:'Origen clásico · sesión 2',t:'Sócrates y los sofistas',b:'La disputa por la verdad es tan antigua como la filosofía. Los sofistas enseñaban a hacer pasar el argumento débil por fuerte; Sócrates los acusó de degradar la verdad. La conferencia sugiere que Sócrates pudo ser el mejor de los sofistas.',src:['Platón, Apología, Critón, Gorgias'],trap:'La escena de Sócrates cerrando la puerta de la celda es un añadido del orador: en el Critón rechaza la fuga mediante el discurso de las Leyes.',q:'¿Por qué una conferencia sobre redes sociales empieza en Atenas?',a:'Porque sostiene que la posverdad es el problema clásico de la verdad con la materialidad de hoy: la retórica que convence de cualquier cosa ya existía; lo nuevo es el medio.'},
+{id:'aristoteles',l:'clas',x:180,y:170,nm:['Aristóteles'],lx:180,ly:144,k:'Origen clásico · sesión 2',t:'Verdad como correspondencia',b:'«Decir de lo que es que es, y de lo que no es que no es, es lo verdadero.» La definición funciona en la vida cotidiana (el pollo caliente quema) y sitúa la verdad en el lenguaje: en el decir.',src:['Metafísica Γ (IV) 7, 1011b25–27','Ética a Nicómaco I 6'],trap:'La conferencia afirma que «soy amigo de Platón, pero más amigo de la verdad» carece de registro escrito. La idea figura en la Ética a Nicómaco I 6; solo la fórmula latina es tardía.',q:'¿Importa para esta definición si el hablante cree lo que dice?',a:'No. La correspondencia mide la relación entre lo dicho y lo que es. Que el hablante crea o no lo que dice es una cuestión de veracidad, no de verdad.'},
+{id:'nietzsche',l:'clas',x:290,y:170,nm:['Nietzsche'],lx:290,ly:144,k:'Origen clásico · sesión 2',t:'«No hay hechos, solo interpretaciones»',b:'Fragmento póstumo dirigido contra el positivismo que se limita a afirmar que solo hay hechos. Nietzsche añade que el propio sujeto que interpreta es también una interpretación. En 1873 había descrito la verdad como «un ejército móvil de metáforas, metonimias, antropomorfismos».',src:['Fragmento póstumo 7[60], KSA 12 (1886–1887)','Sobre verdad y mentira en sentido extramoral (1873)'],trap:'Dos citas alteradas: el original no dice «en estado de combate», y «la verdad es la mentira más eficiente» es una paráfrasis presentada como cita.',q:'¿«Solo hay interpretaciones» implica que todas valen lo mismo?',a:'No. Que todo enunciado pase por un marco no implica que ningún marco sea mejor que otro. Ese salto es el que critica Boghossian.'},
+{id:'redes',l:'hoy',x:70,y:550,nm:['Redes'],lx:70,ly:584,k:'Debate 3.2 · ¿es nueva?',t:'Lo falso viaja más rápido',b:'Sobre unas 126,000 historias difundidas por unos 3 millones de personas en Twitter (2006–2017), lo falso llegó más lejos, más rápido y con mayor profundidad que lo verdadero, sobre todo en política. Los robots aceleraron ambos por igual: la diferencia la producen las personas.',src:['Vosoughi, Roy y Aral (2018), Science'],q:'Si los robots difunden por igual lo verdadero y lo falso, ¿qué explica la diferencia?',a:'Las personas, que comparten más lo falso, por lo general más novedoso y emotivo.'},
+{id:'consumo',l:'hoy',x:180,y:550,nm:['Consumo real'],lx:180,ly:584,k:'Debate 3.2 · ¿es nueva?',t:'Menos de lo que parece',b:'El 1% de los usuarios de Twitter concentró el 80% de la exposición a fuentes falsas, cerca del 6% del consumo de noticias. Compartir noticias falsas fue poco frecuente, y más común entre mayores de 65 años. Estados Unidos, origen de casi toda la evidencia, es una excepción en polarización afectiva.',src:['Grinberg et al. (2019)','Guess, Nagler y Tucker (2019)','Allcott y Gentzkow (2017)','Boxell, Gentzkow y Shapiro (2024)'],q:'¿Puede hablarse de una «era» de la posverdad?',a:'Con cautela: las actitudes son antiguas y el consumo de noticias falsas es minoritario y concentrado. Lo nuevo es la escala, la velocidad y el costo.'},
+{id:'ia',l:'hoy',x:300,y:550,nm:['IA generativa'],lx:300,ly:584,k:'Debate 3.8 · estado a noviembre de 2026',t:'El dividendo del mentiroso',b:'Un público escéptico duda de todo audio y video, incluidos los auténticos. En las elecciones indias de 2024, el contenido generado con IA fue cerca del 1.1% de las imágenes en grupos de WhatsApp. En EE. UU., el Wesleyan Media Project pasó de 164 anuncios políticos generados o mejorados con IA el 4 de septiembre de 2026 a 289 el 29 de octubre, con un gasto superior a 187 millones de dólares; muchos anuncios no llevan aviso de uso de IA. Meta cerró su verificación con terceros en EE. UU. el 7 de abril de 2025.',src:['Chesney y Citron (2019)','Chauchard y Garimella (2026)','Wesleyan Media Project (4 de septiembre y 29 de octubre de 2026)'],q:'¿Cuál es el principal daño de los deepfakes según la evidencia disponible?',a:'Menos su volumen que la duda generalizada: permite negar lo auténtico.'},
+{id:'posverdad',l:'clas',x:430,y:360,x2:1,nm:['Posverdad','tres usos'],lx:408,ly:356,an:'end',k:'Debate 3.1 · ¿qué designa?',t:'Una palabra, tres usos',b:'Periodístico: los hechos objetivos influyen menos en la opinión pública que la emoción y la creencia personal (Oxford, 2016). Ensayístico: la subordinación de la verdad a intereses políticos (McIntyre, 2018). De la conferencia: un mecanismo individual que interpreta la realidad para confirmar lo previo.',src:['Oxford Dictionaries, palabra del año 2016','McIntyre, Posverdad (Cátedra, 2018), p. 180, según reseña'],q:'¿Por qué conviene separar los tres usos?',a:'Porque se contrastan con evidencia distinta: encuestas y consumo, historia cultural, psicología experimental. Mezclados, el término parece profundo y deja de ser discutible.'},
+{id:'tesis',l:'clas',x:510,y:360,nm:['La tesis'],lx:510,ly:336,k:'Sesión 1 · la conferencia',t:'La tesis de la conferencia',b:'La posverdad no se reduce a la mentira: es el horizonte de una época en la que «la verdad ha muerto». La novedad que propone el orador es el autoengaño consciente. Su conclusión: afirmar que el otro miente supone creer que se posee la verdad. En la política espectacularizada se exige actuar bien, no decir la verdad.',src:['Sztajnszrajber (2018), «La posverdad»','Transcripción corregida, 01_transcripcion'],q:'¿Qué supone, según el orador, acusar al otro de mentir?',a:'Creer que se posee la verdad. Derrida añade que, aunque se pruebe que alguien no dijo la verdad, no se puede probar en sentido estricto que mintió.'},
+{id:'nudo',l:'clas',x:590,y:360,x2:1,nm:['La verdad','ha muerto'],lx:614,ly:356,an:'start',k:'Bifurcación',t:'«La verdad ha muerto»',b:'Como el loco de Nietzsche que busca a Dios en el mercado, la conferencia anuncia una muerte ambigua. Es emancipadora, porque en nombre de la verdad se cometieron exterminios y el poder la monopolizó. Es peligrosa, porque si no hay verdad todo parece valer. De aquí parten dos salidas.',src:['La gaya ciencia, § 125','Sztajnszrajber (2018)'],q:'¿Por qué es ambigua la noticia?',a:'Libera del monopolio de la verdad por el poder, pero abre la puerta a que todo valga.'},
+{id:'confirmar',l:'s1',x:635,y:315,nm:['Confirmar lo previo'],lx:622,ly:300,an:'end',k:'Salida 1 · uso corriente',t:'Interpretar para confirmar',b:'Si no hay verdad, la realidad se vuelve amorfa y siempre ofrece el escorzo que da la razón. Es el uso periodístico más común de «posverdad». El ejemplo de la conferencia: tras una ruptura, aferrarse al 1% de un «puede ser».',src:['Sztajnszrajber (2018)'],q:'¿El ejemplo de la ruptura muestra falta de capacidad o un umbral desplazado?',a:'Un umbral desplazado: la persona entiende lo que se le dijo, pero exige muy poca evidencia para creer lo que desea.'},
+{id:'identidad',l:'s1',x:710,y:270,nm:['Identidad'],lx:710,ly:246,k:'Debate 3.3 · mecanismos',t:'Razonamiento motivado',b:'A mayor alfabetización científica y numérica, mayor polarización ideológica en la percepción del riesgo climático. Quienes manejan mejor los números resuelven mejor un problema cuando la respuesta favorece a su grupo. En un entorno de pares que premia una creencia, sostenerla deja de ser irracional.',src:['Kahan et al. (2012, 2017)','Rini (2017)','Van Bavel y Pereira (2018)'],q:'¿Más formación protege contra el razonamiento motivado?',a:'No necesariamente: en los estudios de Kahan, quienes más saben de números se polarizan más.'},
+{id:'desatencion',l:'s1',x:790,y:270,nm:['Desatención'],lx:790,ly:298,k:'Debate 3.3 · mecanismos',t:'Desatención y repetición',b:'El mejor predictor de la creencia en noticias falsas es el escaso razonamiento, no la ideología. Deliberar reduce la creencia en lo falso y no en lo verdadero. La veracidad apenas afecta la intención de compartir. Y lo repetido parece más verdadero aunque se sepa que es falso.',src:['Pennycook y Rand (2019)','Bago, Rand y Pennycook (2020)','Pennycook et al. (2021), Nature','Fazio et al. (2015)'],q:'Si alguien comparte un titular falso, ¿lo cree?',a:'No necesariamente: compartir no equivale a creer. Mucho se comparte sin atender a la exactitud.'},
+{id:'umbral',l:'s1',x:870,y:270,nm:['Umbral, no capacidad'],lx:870,ly:246,k:'Debate 3.3 · síntesis',t:'Capacidad y umbral',b:'Metaanálisis de 31 experimentos y 256,337 juicios: los participantes acertaron el 68.51% de los titulares verdaderos y el 67.24% de los falsos. El pensamiento analítico mejora la capacidad de discriminar. La congruencia ideológica no la altera, pero desplaza el umbral para creer, y más entre quienes más razonan. El sesgo partidario es equivalente en liberales y conservadores.',src:['Sultan et al. (2024), PNAS','Ditto et al. (2019)'],q:'¿Identidad o desatención?',a:'Ambas, en planos distintos: la desatención afecta la capacidad de distinguir; la congruencia ideológica, el umbral para creer.'},
+{id:'eco',l:'s1',x:940,y:270,nm:['Cámara de eco'],lx:940,ly:298,k:'Debate 3.6 · burbujas',t:'Burbuja y cámara de eco',b:'En una burbuja falta información; en una cámara de eco, además, se desacreditan de antemano las fuentes externas. La agrupación entre afines domina Facebook y Twitter, y la segregación favorece lo poco plausible. Pero reducir en un tercio la exposición a fuentes afines no cambió ocho actitudes medidas, y las elecciones propias pesan más que el algoritmo.',src:['Nguyen (2020)','Cinelli et al. (2021)','Stein et al. (2023)','Nyhan et al. (2023)','Bakshy et al. (2015)','Levy (2021)'],trap:'La conferencia afirma la existencia del «dispositivo» mediático sin discutir esta evidencia.',q:'¿Las cámaras de eco explican la posverdad?',a:'Solo en parte: existen, pero afectan a una minoría. Para la mayoría, el problema es la falta de atención.'},
+{id:'autoengano',l:'s1',x:1060,y:270,x2:1,nm:['Autoengaño','consciente'],lx:1060,ly:300,k:'Novedad de la conferencia',t:'Autoengaño consciente',b:'El orador lo resume como «me hago el boludo»: sé que recorto los datos y no me importa. Según Mele, el autoengaño no exige intención: basta que el deseo sesgue el tratamiento de la evidencia. Si hay conciencia plena, ya no es autoengaño. La expresión mezcla dos fenómenos distintos.',src:['Mele, Self-Deception Unmasked (2001)','Deweese-Boyd, SEP (2006)'],q:'¿Puede uno saber que se engaña y seguir engañado?',a:'Según Mele, el autoengaño no requiere saberlo. Si se sabe, se trata de otra cosa: bullshit, si concierne a lo que se dice; razón cínica, si concierne a lo que se cree.'},
+{id:'bullshit',l:'s1',x:1150,y:180,nm:['Bullshit · decir'],lx:1188,ly:156,an:'end',k:'Rama de la salida 1',t:'Bullshit: indiferencia al hablar',b:'Quien miente necesita conocer la verdad para ocultarla; el charlatán no la mira. Describe un modo de hablar ante otros y encaja con los datos sobre compartir sin creer.',src:['Frankfurt, «On Bullshit» (1986; libro, 2005)','Pennycook et al. (2021)'],q:'¿Por qué el bullshit puede ser más dañino que la mentira?',a:'Porque el mentiroso aún reconoce la autoridad de la verdad al ocultarla; el charlatán la ignora por completo.'},
+{id:'cinica',l:'s1',x:1150,y:270,nm:['Razón cínica'],lx:1150,ly:250,k:'Rama de la salida 1 · forma extrema',t:'Razón cínica: saber y seguir igual',b:'La «falsa conciencia ilustrada»: saber que una creencia es falsa o interesada y seguir actuando conforme a ella. Es lo más cercano al autoengaño consciente cuando concierne a lo que uno cree. Forma extrema de la salida 1: nada puede refutar a quien ya sabe y no le importa.',src:['Sloterdijk, Crítica de la razón cínica (1983)'],q:'¿Por qué la corrección con datos falla ante el cinismo?',a:'Porque el cínico ya conoce los datos; el problema no es informativo, sino de compromiso con la verdad.'},
+{id:'otro',l:'s2',x:635,y:405,nm:['El otro puede','tener razón'],lx:622,ly:422,an:'end',k:'Salida 2 · la que defiende la conferencia',t:'Abrirse al otro',b:'Si no hay una verdad única, todo lo que pienso podría ser de otro modo. La contingencia se vuelve hospitalidad: hasta las posiciones que más rechazo podrían resultar razonables.',src:['Sztajnszrajber (2018)'],q:'¿Qué precisa esta salida para no volverse «todo vale»?',a:'Distinguir hechos de opiniones: la apertura vale para las segundas, no para los primeros (Arendt).'},
+{id:'democracia',l:'s2',x:710,y:450,nm:['Democracia abierta'],lx:710,ly:478,k:'Debate 3.5 · democracia y verdad',t:'Democracia como descentramiento',b:'Para Derrida, la democracia nunca está terminada: es ampliación de derechos hacia quienes aún no se reconocen como sujetos de derechos. Para la conferencia, su clave es el descentramiento de la verdad: como el otro puede tener razón, uno se escapa de sí mismo.',src:['Derrida','Arendt, «Verdad y política» (1967)'],q:'¿Por qué una verdad única tensiona la democracia?',a:'Porque convierte a quien piensa distinto en ignorante o enemigo. Pero Arendt advierte que tampoco hay democracia sin hechos compartidos.'},
+{id:'falsedad',l:'s2',x:800,y:450,nm:['Falsedad ≠ mentira'],lx:800,ly:428,k:'Distinción central',t:'Falsedad no es mentira',b:'Verdad y falsedad pertenecen al conocimiento; veracidad y mentira, a la intención. Derrida: es imposible probar en sentido estricto que alguien mintió, aun cuando se pruebe que no dijo la verdad.',src:['Derrida, Historia de la mentira (1995)','Mahon, SEP (2008)'],trap:'La conferencia salta a «la mentira no existe». Que algo no pueda probarse concluyentemente no implica que no ocurra.',q:'Un periodista publica un dato falso. ¿Mintió?',a:'No puede afirmarse solo por la falsedad del dato: habría que saber que lo creía falso y quiso engañar. Puede probarse el error, no la intención.'},
+{id:'consenso',l:'s2',x:890,y:450,nm:['Verdad por consenso'],lx:890,ly:478,k:'Debate 3.4 · teorías de la verdad',t:'Consenso y pragmatismo',b:'Peirce: verdadero es aquello en lo que convergería la investigación. James: lo conveniente para el pensamiento. Habermas: lo que resistiría una discusión libre de coacción. Rorty: no se necesita una teoría de la verdad.',src:['Capps, SEP (2019)','Habermas (1973)'],trap:'La conferencia reduce el pragmatismo a la utilidad y atribuye a Marx que «la verdad es una relación social»: Marx lo dice del capital.',q:'¿Consenso significa que la mayoría decide qué es verdad?',a:'No: en Peirce y Habermas el consenso es ideal, el de una investigación o discusión sin coacción, no un recuento de votos.'},
+{id:'todovale',l:'s2',x:980,y:450,warn:1,nm:['Riesgo: todo vale'],lx:980,ly:428,k:'Salida 2 · forma extrema',t:'Riesgo: todo vale',b:'De «el conocimiento se produce socialmente» no se sigue «no hay verdad objetiva». Fuller lee la posverdad como una disputa de poder sobre las reglas del conocimiento; Han, como un régimen que valora la información por la atención que capta.',src:['Boghossian (2006)','Fuller (2018)','Han, Infocracia (2022)'],trap:'Ejemplo de la conferencia: los mbuti «solo tenían uno y muchos». Es falso según Tuominen (2023), y aun siendo cierto mostraría cómo se impone un saber, no qué lo hace verdadero.',q:'¿Qué distingue una afirmación sociológica de una epistemológica?',a:'«Se impone lo que tiene más poder» describe cómo se forman las creencias; no dice qué hace verdadera una creencia.'},
+{id:'hechos',l:'ar',x:1150,y:450,x2:1,nm:['Hechos','compartidos'],lx:1136,ly:482,an:'end',k:'Línea de Arendt · donde se corrigen ambas salidas',t:'Hechos compartidos',b:'Arendt da dos respuestas. Vista desde la política, la verdad es despótica: los hechos tienen una terquedad que nada mueve salvo la mentira. Pero la libertad de opinión es una farsa sin información factual garantizada. La apertura vale para la opinión, no para los hechos.',src:['Arendt, «Verdad y política» (1967)'],trap:'La conferencia recoge solo la primera mitad de la respuesta de Arendt.',q:'¿Por qué esta estación corrige las dos salidas?',a:'Corrige la salida 1 porque exige hechos compartidos frente al recorte interesado; corrige la salida 2 porque limita la apertura al terreno de las opiniones.'},
+{id:'veracidad',l:'ar',x:1010,y:620,nm:['Exactitud y sinceridad'],lx:1010,ly:652,k:'Línea de Arendt',t:'Las virtudes de la veracidad',b:'Williams distingue dos virtudes: exactitud (esforzarse por acertar) y sinceridad (decir lo que se cree). Critica tanto a quienes niegan el valor de la verdad como a quienes lo dan por supuesto. Lynch: la razón es necesaria para la democracia.',src:['Williams, Verdad y veracidad (2002)','Lynch (2012)'],q:'¿Qué virtud falla en el bullshit y cuál en la mentira?',a:'En la mentira falla la sinceridad; en el bullshit falla la exactitud, porque no hay esfuerzo por acertar.'},
+{id:'desmentir',l:'ar',x:890,y:620,nm:['Desmentir'],lx:890,ly:598,k:'Debate 3.7 · intervenciones',t:'Desmentir',b:'El desmentido es eficaz (d = 1.14 a 1.33), pero la información falsa persiste (d = 0.75 a 1.06). La verificación de datos corrige creencias políticas (d = 0.29), menos ante creencias previas fuertes. El temido efecto rebote no aparece en muestras amplias.',src:['Chan et al. (2017)','Walter et al. (2020)','Wood y Porter (2019)','Lorko et al. (2026)'],q:'¿Un desmentido más detallado es siempre mejor?',a:'No del todo: se asoció con más corrección y, paradójicamente, también con más persistencia de lo falso.'},
+{id:'inocular',l:'ar',x:780,y:620,nm:['Inocular'],lx:780,ly:652,k:'Debate 3.7 · intervenciones',t:'Inocular antes',b:'Videos breves sobre técnicas de manipulación mejoraron su reconocimiento en seis experimentos y en un estudio de campo en YouTube. Un metaanálisis de 33 experimentos (N = 37,025) halla que la inoculación mejora la capacidad de distinguir sin aumentar el escepticismo general.',src:['Roozenbeek et al. (2022)','Simchon et al. (2026)'],q:'¿Cuándo conviene prevenir y cuándo desmentir?',a:'La prevención funciona sobre todo si la evaluación sigue de inmediato; el desmentido es más consistente y dura al menos dos semanas (Lorko et al., 2026).'},
+{id:'exactitud',l:'ar',x:670,y:620,nm:['Recordar exactitud'],lx:670,ly:598,k:'Debate 3.7 · intervenciones',t:'Recordar la exactitud',b:'Un aviso que pide pensar en la exactitud mejora la calidad de lo que se comparte. Una réplica halló un efecto pequeño; una colaboración adversarial entre ambos equipos (N = 27,828) confirmó la mejora, también entre republicanos. En conjunto, inoculación y desmentido tienen la evidencia más consistente.',src:['Pennycook et al. (2021)','Roozenbeek et al. (2021)','Martel et al. (2024)','Blair et al. (2024)'],q:'¿Por qué funciona un simple recordatorio?',a:'Porque buena parte del problema es desatención, no incapacidad: el recordatorio devuelve la exactitud al primer plano al momento de compartir.'},
+{id:'tesis-propia',l:'ar',x:540,y:620,end:1,nm:['Tesis propia'],lx:540,ly:658,k:'Sesión 4 · llegada',t:'Una tesis propia',b:'Formulación de trabajo que este recorrido permite defender: la apertura vale para las opiniones y la firmeza para los hechos; la falsedad se prueba, la mentira rara vez; y la posverdad es menos una era que una infraestructura nueva para actitudes antiguas.',src:['Mapa del debate, 02_estudio'],q:'¿Qué evidencia obligaría a revisar esta tesis?',a:'Por ejemplo, datos fuera de EE. UU. que muestren un consumo masivo de desinformación, o intervenciones que fracasen de forma sistemática.'}];
+const EJ={
+sofistas:['Ilustración','Un debate televisado en el que gana quien mejor habla y no quien tiene razón reproduce la acusación de Sócrates: la retórica sustituye a la verdad.'],
+aristoteles:['De la conferencia','«El pollo está caliente.» Si al probarlo quema, la frase era verdadera; si está frío, era falsa, crea lo que crea quien la dijo.'],
+nietzsche:['De la conferencia','«Libertad» puede leerse como capacidad individual de elegir o como emancipación del individualismo: el mismo término, dos marcos de interpretación.'],
+redes:['Ilustración','Un rumor alarmante y su desmentido circulan el mismo día. El rumor, más novedoso, se comparte en cascadas más largas que la corrección.'],
+consumo:['Ilustración','En un grupo familiar de cuarenta personas, casi todo el contenido falso suele venir de dos o tres miembros muy activos: la concentración que midió Grinberg, a pequeña escala.'],
+ia:['Caso documentado','21 de enero de 2024: dos días antes de la primaria demócrata de New Hampshire, miles de votantes recibieron una llamada con la voz clonada de Biden que les pedía no votar. El consultor Steve Kramer, que la encargó, dijo después que buscaba dar una señal de alerta sobre la IA; la FCC le impuso una multa de 6 millones de dólares por falsificar el identificador de llamadas. A la inversa, hoy cualquier grabación auténtica puede descartarse como «hecha con IA».'],
+posverdad:['Caso documentado','Oxford eligió la palabra en 2016, cuando su uso se disparó en torno al referéndum del Brexit y a la elección presidencial de EE. UU.'],
+tesis:['De la conferencia · caso documentado','El video de la gobernadora Vidal (septiembre de 2018): en una llamada «espontánea» a una vecina, la taza cambia de color entre una toma y otra. Para sus partidarios el error no importa: actúa bien.'],
+nudo:['De la conferencia','Al final de The Truman Show, el director advierte a Truman que afuera hay tantas mentiras como en el estudio. Salir de la ficción no garantiza llegar a la verdad.'],
+confirmar:['De la conferencia','Tras una ruptura, la otra persona concede que aquel atardecer en San Bernardo «puede ser que estuvo bueno». Quien quiere volver se aferra a ese 1%.'],
+identidad:['Experimento','Kahan et al. (2017) presentaron el mismo problema numérico como un ensayo de una crema para la piel o como datos sobre control de armas. Los más hábiles con los números acertaron mucho menos cuando la respuesta contradecía su postura política.'],
+desatencion:['Ilustración','Alguien reenvía el audio de «un médico» sobre una cura milagrosa sin escucharlo entero. Si antes se le pregunta «¿esto es exacto?», duda; sin la pregunta, lo comparte.'],
+umbral:['De la conferencia','«Si quiero demostrar que nuestro presidente es un genio, lo voy a demostrar.» Quien admira al líder no entiende peor sus discursos: exige menos evidencia para aplaudirlos.'],
+eco:['Ilustración','Un foro que enseña a desconfiar de «los medios» antes de cualquier dato: cuando llega un desmentido, se lee como prueba de la conspiración. Eso es una cámara de eco. Un grupo que simplemente no ve otros medios es una burbuja.'],
+autoengano:['De la conferencia','«Me hago el boludo»: veo que algo no cierra en los datos, pero sigo porque me conviene creerlo así.'],
+bullshit:['Ilustración','El vendedor que asegura que un producto «está científicamente comprobado» sin saber ni importarle si existe tal estudio. No oculta una verdad que conoce: habla sin atender a ella.'],
+cinica:['Ilustración','Quien sabe que una cifra que repite está mal calculada y la sigue usando porque «es la que funciona». Darle más datos no cambia nada: ya los tiene.'],
+otro:['De la conferencia','En el debate sobre el aborto, si cada parte trata su posición como verdad absoluta («hay vida», «no hay vida»), no cabe resolución democrática; solo admitir que el otro puede tener razón abre un acuerdo.'],
+democracia:['De la conferencia','El divorcio o el voto femenino parecieron absurdos antes de convertirse en derechos. El orador pregunta, con Derrida, a quién no se reconoce hoy: los animales, los niños.'],
+falsedad:['De la conferencia','La anécdota final: la hija del orador dice que durmió en casa de su madre. Él pregunta si le miente, y ella responde: «Papá, si vos no creés en la verdad». La falsedad podría comprobarse; la intención, no.'],
+consenso:['Ilustración','El geocentrismo fue consenso durante siglos y era falso. Para Peirce, lo verdadero no es lo que vota la mayoría, sino aquello en lo que convergería una investigación honesta.'],
+todovale:['De la conferencia','«Los mbuti solo tenían uno y muchos, y fueron colonizados.» El ejemplo es falso, y aun siendo cierto mostraría cómo se impone un saber, no que la aritmética sea arbitraria.'],
+hechos:['Caso documentado','22 de enero de 2017: ante datos que contradecían que la asistencia a la investidura de Trump hubiera sido la mayor de la historia, la asesora Kellyanne Conway habló de «hechos alternativos». El periodista Chuck Todd respondió que los hechos alternativos no son hechos, sino falsedades.'],
+veracidad:['Caso documentado','Brexit, 2016: «Enviamos a la UE 350 millones de libras por semana». Era la contribución bruta, sin descontar el reembolso; el presidente de la Autoridad Estadística del Reino Unido consideró la afirmación «potencialmente engañosa» y, cuando Boris Johnson repitió la cifra en 2017, «un claro uso indebido de las estadísticas oficiales». Una cifra real puede fallar en exactitud.'],
+desmentir:['Recomendación','Un desmentido eficaz explica por qué el rumor es falso y ofrece una explicación alternativa; decir solo «es falso» deja un hueco que el rumor vuelve a ocupar.'],
+inocular:['Experimento','Los videos de Roozenbeek et al. (2022) mostraban con ejemplos de ficción técnicas como el falso dilema o el chivo expiatorio; después, los participantes las reconocían mejor en contenidos reales.'],
+exactitud:['Experimento','En los estudios de Pennycook et al. (2021), bastaba pedir que se evaluara la exactitud de un solo titular para que luego se compartieran menos noticias falsas.'],
+'tesis-propia':['Aplicación','Ante los «hechos alternativos» se discute la opinión sobre un gobierno, no el número de asistentes; ante los 350 millones, se discute qué hacer con el dinero, no cuál es la contribución neta.']};
+const CASES=[
+{t:'El audio del médico',k:'Caso hipotético',s:'Una tía reenvía al grupo familiar un audio atribuido a «un médico» que promete una cura casera. No lo escuchó entero.',q:'¿Mintió? ¿Qué intervención sería más eficaz?',a:'No hay mentira: no consta que creyera falso el audio. Se trata de desatención y, a lo sumo, de bullshit al compartir sin atender a la verdad. Lo más eficaz es un recordatorio de exactitud («¿lo verificaste?») y un desmentido que ofrezca la explicación correcta.',st:['desatencion','bullshit','exactitud','desmentir'],lab:'Estudios citados',src:[['Pennycook et al. (2021), DOI','https://doi.org/10.1038/s41586-021-03344-2'],['Chan et al. (2017), DOI','https://doi.org/10.1177/0956797617714579']]},
+{t:'«Hechos alternativos»',k:'Caso documentado, 2017',s:'Ante fotografías y datos sobre la asistencia a una investidura, una portavoz presenta la cifra contraria como «hechos alternativos».',q:'¿Qué estación lo describe mejor y qué distinción de Arendt está en juego?',a:'La de los hechos compartidos: la cifra de asistentes es un hecho, no una opinión, y no admite «alternativas». Puede probarse su falsedad; afirmar que fue mentira exigiría probar la intención (Derrida).',st:['hechos','falsedad','todovale'],src:[['El intercambio en Meet the Press: NBC News','https://www.nbcnews.com/meet-the-press/video/kellyanne-conway-sean-spice-shared-alternative-facts-in-trump-s-crowd-size-149455941738'],['Time, enero de 2017','https://time.com/4642689/kellyanne-conway-sean-spicer-donald-trump-alternative-facts/'],['Politico, enero de 2017','https://www.politico.com/story/2017/01/alternative-facts-kellyanne-conway-233998']]},
+{t:'350 millones por semana',k:'Caso documentado, 2016–2017',s:'Una campaña afirma que el país envía 350 millones de libras semanales a la UE. La cifra es la contribución bruta, sin descontar el reembolso.',q:'¿Es una afirmación falsa, una mentira o algo distinto?',a:'La cifra bruta existe, pero presentarla como lo que se envía omite el reembolso: falla la exactitud (Williams) y engaña por omisión, aunque se apoye en un dato oficial. Calificarla de mentira requeriría saber qué creían quienes la usaban.',st:['veracidad','aristoteles','falsedad'],src:[['Carta del presidente de la Autoridad Estadística al canciller (PDF, 17 de septiembre de 2017)','https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2017/09/Letter-from-Sir-David-Norgrove-to-Foreign-Secretary.pdf'],['Carta sobre la cifra de Vote Leave (PDF, 21 de abril de 2016)','https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2016/04/Letter-from-Sir-Andrew-Dilnot-to-Norman-Lamb-MP-210416.pdf'],['BBC News, 18 de septiembre de 2017','https://www.bbc.com/news/uk-politics-41301049']]},
+{t:'La voz clonada',k:'Caso documentado, 2024',s:'Una llamada automática con la voz clonada de un presidente pide no votar. Su autor alegó después que quería advertir sobre los peligros de la IA.',q:'¿Qué nuevo daño introduce la IA y qué dice la intención alegada?',a:'Además del engaño directo, el dividendo del mentiroso: cualquier audio auténtico puede negarse como falso. La intención alegada ilustra la tesis de Derrida: solo el autor conoce su intención. La FCC no dependió de esa versión: multó a Kramer con 6 millones de dólares por falsificar el identificador de llamadas con intención de defraudar y causar daño, intención que dedujo de indicios externos, entre ellos sus instrucciones al proveedor y sus propias declaraciones públicas.',st:['ia','falsedad','desmentir'],src:[['Orden de la FCC que impone la multa (PDF; adoptada el 26 de septiembre de 2024)','https://docs.fcc.gov/public/attachments/FCC-24-104A1.pdf'],['Versión de Kramer sobre sus motivos: AP, 26 de febrero de 2024','https://apnews.com/article/ai-robocall-biden-new-hampshire-primary-2024-f94aa2d7f835ccc3cc254a90cd481a99']]},
+{t:'El rumor que vuelve',k:'Caso hipotético',s:'En un grupo vecinal, el mismo rumor sobre un robo reaparece cada semana. Varios miembros dicen: «Ya lo he leído muchas veces, algo de cierto tendrá».',q:'¿Qué mecanismo opera y por qué repetir el desmentido podría no bastar?',a:'El efecto de verdad ilusoria: lo repetido parece verdadero aunque se sepa falso (Fazio et al., 2015). Como lo falso persiste tras el desmentido (Chan et al., 2017), conviene inocular antes y ofrecer una explicación alternativa, no solo negar.',st:['desatencion','desmentir','inocular'],lab:'Estudios citados',src:[['Fazio et al. (2015), DOI','https://doi.org/10.1037/xge0000098'],['Chan et al. (2017), DOI','https://doi.org/10.1177/0956797617714579']]},
+{t:'El discurso del líder que admiro',k:'De la conferencia',s:'Alguien escucha todos los discursos de su líder y encuentra en cada uno una prueba de genialidad; los del adversario le parecen siempre vacíos.',q:'¿Le falta capacidad de juicio o se trata de otra cosa? ¿Cuándo sería cinismo?',a:'Es un umbral desplazado por congruencia ideológica: la capacidad de comprender no cambia, pero exige menos evidencia a lo afín (Sultan et al., 2024). Sería razón cínica si supiera que los discursos son vacíos y siguiera aplaudiéndolos por conveniencia.',st:['umbral','identidad','cinica'],lab:'Estudios citados',src:[['Sultan et al. (2024), DOI','https://doi.org/10.1073/pnas.2409329121']]}];
+const CMP=[['Premisa','No hay verdad: interpreto lo que me conviene.','No hay verdad única: el otro puede tener razón.','Hay hechos y hay opiniones, y no se tratan igual.'],['Ante los hechos','Los recorta para confirmar lo previo.','Corre el riesgo de tratarlos como una opinión más.','Los exige compartidos y verificables.'],['Ante las opiniones','Las ajenas no cuentan.','Todas merecen escucha.','Se discuten y se negocian.'],['Mecanismo y evidencia','Identidad (Kahan), desatención (Pennycook), repetición (Fazio), umbral desplazado (Sultan).','Descentramiento (Derrida); verdad por consenso (Peirce, Habermas).','Verdad de hecho (Arendt); exactitud y sinceridad (Williams).'],['Forma extrema','Cámara de eco y razón cínica: nada la refuta.','Todo vale: un relativismo que ya no distingue (Boghossian).','Despotismo, si la verdad pretende gobernar también las opiniones.'],['Qué la corrige','Desmentir, inocular y recordar la exactitud.','Separar lo social de lo arbitrario y el hecho de la opinión.','Un debate abierto sobre un suelo de hechos.'],['En la conferencia','Es el uso periodístico que critica.','Es la salida que defiende.','Aparece citada solo a medias.']];
+const an=x=>/^https?:\/\//.test(x[1])?`<a href="${esc(x[1])}" rel="noopener">${esc(x[0])}</a>`:esc(x[0]);
+const lk=x=>/^https?:\/\//.test(x[1])?`<li>${an(x)}</li>`:'';
+const LNK={
+ ia:[['Orden de la FCC que impone la multa de 6 millones de dólares (PDF; adoptada el 26 de septiembre de 2024)','https://docs.fcc.gov/public/attachments/FCC-24-104A1.pdf'],['Propuesta de multa de la FCC, con los hechos (PDF; 23 de mayo de 2024)','https://docs.fcc.gov/public/attachments/FCC-24-59A1.pdf'],['Versión de Kramer sobre sus motivos: AP, 26 de febrero de 2024','https://apnews.com/article/ai-robocall-biden-new-hampshire-primary-2024-f94aa2d7f835ccc3cc254a90cd481a99'],['Quién fabricó el audio: NBC News, 23 de febrero de 2024','https://www.nbcnews.com/politics/2024-election/biden-robocall-new-hampshire-strategist-rcna139760'],['Fin de la verificación con terceros en EE. UU.: anuncio de Meta','https://about.fb.com/news/2025/03/testing-begins-community-notes-facebook-instagram-threads/'],['Anuncios políticos con IA: Wesleyan Media Project, 4 de septiembre de 2026','https://mediaproject.wesleyan.edu/?p=56458'],['Actualización de esas cifras: Wesleyan Media Project, 29 de octubre de 2026','https://mediaproject.wesleyan.edu/releases-102926/'],['Contenido con IA en las elecciones de India de 2024: Chauchard y Garimella (2026), DOI','https://doi.org/10.1177/19401612261494396'],['«Dividendo del mentiroso»: Chesney y Citron (2019), DOI','https://doi.org/10.15779/Z38RV0D15J']],
+ posverdad:[['Oxford Dictionaries: palabra del año 2016','https://languages.oup.com/word-of-the-year/2016/']],
+ tesis:[['La taza que cambia de color: Rosario3, 3 de septiembre de 2018','https://www.rosario3.com/noticias/La-taza-que-cambia-de-color-el-error-de-edicion-que-puso-en-evidencia-a-Maria-Eugenia-Vidal-tras-un-llamado-espontaneo---20180903-0014.html'],['El llamado «espontáneo» y «la taza mágica»: Canal 26, 3 de septiembre de 2018','https://www.canal26.com/politica/2018/09/03/el-llamado-espontaneo-de-vidal-a-una-vecina-y-la-taza-magica/']],
+ hechos:[['El intercambio en Meet the Press: NBC News','https://www.nbcnews.com/meet-the-press/video/kellyanne-conway-sean-spice-shared-alternative-facts-in-trump-s-crowd-size-149455941738'],['Time, enero de 2017','https://time.com/4642689/kellyanne-conway-sean-spicer-donald-trump-alternative-facts/'],['Politico, enero de 2017','https://www.politico.com/story/2017/01/alternative-facts-kellyanne-conway-233998']],
+ veracidad:[['Carta del presidente de la Autoridad Estadística al canciller (PDF, 17 de septiembre de 2017)','https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2017/09/Letter-from-Sir-David-Norgrove-to-Foreign-Secretary.pdf'],['Carta sobre la cifra de Vote Leave (PDF, 21 de abril de 2016)','https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2016/04/Letter-from-Sir-Andrew-Dilnot-to-Norman-Lamb-MP-210416.pdf'],['BBC News, 18 de septiembre de 2017','https://www.bbc.com/news/uk-politics-41301049'],['Full Fact: verificación de la cifra','https://fullfact.org/europe/350-million-week-boris-johnson-statistics-authority-misuse/']],
+ identidad:[['Kahan et al. (2017), «Motivated numeracy and enlightened self-government», DOI','https://doi.org/10.1017/bpp.2016.2']],
+ inocular:[['Roozenbeek et al. (2022), «Psychological inoculation improves resilience against misinformation on social media», DOI','https://doi.org/10.1126/sciadv.abo6254']],
+ exactitud:[['Pennycook et al. (2021), «Shifting attention to accuracy can reduce misinformation online», DOI','https://doi.org/10.1038/s41586-021-03344-2']],
+ umbral:[['Sultan et al. (2024), «Susceptibility to online misinformation», DOI','https://doi.org/10.1073/pnas.2409329121']],
+ desmentir:[['Chan et al. (2017), «Debunking: A Meta-Analysis of Messages Countering Misinformation», DOI','https://doi.org/10.1177/0956797617714579']]};
+const REAL=[
+ {f:'21 de enero de 2024',t:'La llamada con la voz clonada de Biden',s:'Dos días antes de la primaria demócrata de New Hampshire, miles de llamadas con una voz generada por IA que imitaba a Biden pedían no votar. El audio lo fabricó un mago de Nueva Orleans en menos de 20 minutos, por 150 dólares. La FCC impuso a Steve Kramer, que lo encargó, una multa de 6 millones de dólares por falsificar el identificador de llamadas. Kramer declaró que buscaba dar una señal de alerta sobre los usos dañinos de la IA.',l:[['Orden de la FCC (PDF)','https://docs.fcc.gov/public/attachments/FCC-24-104A1.pdf'],['AP, 26 de febrero de 2024','https://apnews.com/article/ai-robocall-biden-new-hampshire-primary-2024-f94aa2d7f835ccc3cc254a90cd481a99'],['NBC News, 23 de febrero de 2024','https://www.nbcnews.com/politics/2024-election/biden-robocall-new-hampshire-strategist-rcna139760']],st:['ia','falsedad']},
+ {f:'22 de enero de 2017',t:'«Hechos alternativos»',s:'En plena disputa sobre la asistencia a la investidura de Trump, la consejera Kellyanne Conway defendió en Meet the Press las afirmaciones del secretario de prensa como «hechos alternativos». Chuck Todd le respondió que los hechos alternativos no son hechos, sino falsedades.',l:[['Video del intercambio: NBC News','https://www.nbcnews.com/meet-the-press/video/kellyanne-conway-sean-spice-shared-alternative-facts-in-trump-s-crowd-size-149455941738'],['Time, enero de 2017','https://time.com/4642689/kellyanne-conway-sean-spicer-donald-trump-alternative-facts/'],['Politico, enero de 2017','https://www.politico.com/story/2017/01/alternative-facts-kellyanne-conway-233998']],st:['hechos','falsedad']},
+ {f:'2016–2017',t:'Los 350 millones de libras por semana',s:'La campaña por salir de la UE afirmó que el Reino Unido enviaba 350 millones de libras semanales a Bruselas. Era la contribución bruta, sin descontar el reembolso. El presidente de la Autoridad Estadística consideró la afirmación «potencialmente engañosa» en abril de 2016 y «un claro uso indebido de las estadísticas oficiales» cuando Boris Johnson repitió la cifra en septiembre de 2017.',l:[['Carta de 2017 (PDF)','https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2017/09/Letter-from-Sir-David-Norgrove-to-Foreign-Secretary.pdf'],['Carta de 2016 (PDF)','https://uksa.statisticsauthority.gov.uk/wp-content/uploads/sites/2/2016/04/Letter-from-Sir-Andrew-Dilnot-to-Norman-Lamb-MP-210416.pdf'],['BBC News, 18 de septiembre de 2017','https://www.bbc.com/news/uk-politics-41301049'],['Full Fact','https://fullfact.org/europe/350-million-week-boris-johnson-statistics-authority-misuse/']],st:['veracidad','aristoteles']},
+ {f:'2016',t:'«Posverdad», palabra del año',s:'Oxford Dictionaries eligió post-truth como palabra del año por el aumento de uso en el contexto del referéndum del Brexit y de la elección presidencial de Estados Unidos.',l:[['Oxford Dictionaries','https://languages.oup.com/word-of-the-year/2016/']],st:['posverdad']},
+ {f:'Septiembre de 2018',t:'La taza de la gobernadora Vidal',s:'La gobernadora de Buenos Aires publicó un video de una llamada «espontánea» a una vecina de City Bell a la que había visto en la televisión quejarse por unos asaltos. Al cambiar de toma, la taza blanca de su escritorio aparece azul. La conferencia lo usa para explicar la política espectacularizada.',l:[['Rosario3, 3 de septiembre de 2018','https://www.rosario3.com/noticias/La-taza-que-cambia-de-color-el-error-de-edicion-que-puso-en-evidencia-a-Maria-Eugenia-Vidal-tras-un-llamado-espontaneo---20180903-0014.html'],['Canal 26, 3 de septiembre de 2018','https://www.canal26.com/politica/2018/09/03/el-llamado-espontaneo-de-vidal-a-una-vecina-y-la-taza-magica/']],st:['tesis']},
+ {f:'7 de abril de 2025',t:'Meta deja de verificar con terceros en EE. UU.',s:'Meta cerró su programa de verificación con terceros en Estados Unidos y lo sustituyó por Community Notes, según su propio anuncio.',l:[['Anuncio de Meta','https://about.fb.com/news/2025/03/testing-begins-community-notes-facebook-instagram-threads/']],st:['ia','desmentir']},
+ {f:'4 de septiembre y 29 de octubre de 2026',t:'Anuncios políticos con IA en EE. UU.',s:'El Wesleyan Media Project, un centro de investigación universitaria, identificó al menos 164 anuncios políticos generados o mejorados con IA el 4 de septiembre de 2026, con un gasto poco inferior a 80 millones de dólares. Al 29 de octubre eran 289 anuncios y el gasto superaba los 187 millones; algo más del 90 % del gasto procedía de candidatos, comités o grupos republicanos. El propio proyecto advierte que recuenta por debajo de la realidad: muchos anuncios no llevan aviso de uso de IA.',l:[['Comunicado del 4 de septiembre de 2026','https://mediaproject.wesleyan.edu/?p=56458'],['Comunicado del 29 de octubre de 2026','https://mediaproject.wesleyan.edu/releases-102926/'],['Poynter, 11 de noviembre de 2026','https://www.poynter.org/fact-checking/2026/ai-generated-political-ads-2026-midterm-elections/']],st:['ia']}];
+const ERRS=[['«El que miente sabe la verdad.»','Basta con creer falso lo que se afirma y querer que el otro lo crea verdadero; una mentira puede incluso ser verdadera.','Mahon (2008), SEP'],['Arendt sería la pensadora del «descentramiento de la verdad».','Arendt defiende las verdades de hecho como suelo de la opinión.','Arendt, «Verdad y política» (1967)'],['«La mentira no existe», atribuido a Derrida.','Derrida sostiene que no puede probarse en sentido estricto, no que no exista.','Derrida, Historia de la mentira (1995)'],['«La verdad es un ejército de metáforas en estado de combate.»','El original dice «un ejército móvil de metáforas, metonimias, antropomorfismos».','Nietzsche (1873)'],['«La verdad es la mentira más eficiente», como cita de Nietzsche.','Es una paráfrasis, no una cita literal.','Nietzsche (1873)'],['«La verdad, como decía Marx, es una relación social.»','Marx lo dice del capital; lo próximo es la segunda tesis sobre Feuerbach.','Marx (1845)'],['Los mbuti solo contaban «uno y muchos».','Sin respaldo: la afirmación procede de citas deformadas.','Tuominen (2023), Historia Mathematica'],['«Amigo de Platón, pero más de la verdad» no tendría registro escrito.','La idea está en el propio Aristóteles.','Ética a Nicómaco I 6'],['Rorty: verdad igual a utilidad.','La fórmula se aproxima más a James; Rorty abandona la verdad como correspondencia.','Capps, SEP (2019)']];
+const ORDER=S.map(s=>s.id);
+const NS='http://www.w3.org/2000/svg',map=document.getElementById('map'),panel=document.getElementById('panel');
+const col=l=>`var(${LINES[l].c})`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mk=s=>esc(s).replace(/«([^»]+)»/g,'<span class="cita">«$1»</span>');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let seen=new Set(),cur=0,filt=null;
+try{seen=new Set(JSON.parse(localStorage.getItem('posverdad-vistas')||'[]'))}catch(e){}
+const save=()=>{try{localStorage.setItem('posverdad-vistas',JSON.stringify([...seen]))}catch(e){}};
+
+let svg='';
+PATHS.forEach(p=>{svg+=`<path class="ln" data-l="${p.l}" d="${p.d}" stroke="${col(p.l)}"${LINES[p.l].dash?' stroke-dasharray="14 10"':''}/>`});
+svg+=`<text class="xl" x="1140" y="365" text-anchor="end" font-size="14" font-style="italic" style="fill:var(--soft);font-family:Newsreader,serif">ambas salidas se corrigen con hechos</text>`;
+svg+=`<path class="ln xl" data-l="ar" d="M1150 270V450" stroke="var(--ink)" stroke-dasharray="2 9" style="stroke-width:3"/>`;
+S.forEach((s,i)=>{
+ const c=col(s.l),r=s.x2?13:s.end?15:9,an=s.an||'middle';
+ const nm=s.nm.map((t,j)=>`<text class="nm" x="${s.lx}" y="${s.ly+j*19}" text-anchor="${an}" font-size="${j?14:16}" font-weight="${j?400:500}">${esc(t)}</text>`).join('');
+ const ring=s.x2?`<circle class="o" r="${r}" stroke="var(--ink)"/>`:s.end?`<circle class="o" r="${r}" stroke="var(--ink)" style="fill:var(--ink)"/>`:`<circle class="o" r="${r}" stroke="${s.warn?'var(--ink)':c}"${s.warn?' stroke-dasharray="3 3"':''}/>`;
+ const flag=s.trap?`<circle class="flag" cx="${r+5}" cy="${-r-4}" r="5"/>`:'';
+ svg+=`<g class="st" data-i="${i}" data-l="${s.l}" tabindex="0" role="button" aria-label="${esc(s.t)}${s.trap?' (contiene un error de la conferencia)':''}"><g transform="translate(${s.x} ${s.y})"><circle r="24" fill="transparent"/>${ring}<circle class="dot" r="3.5" style="fill:${s.end?'var(--bg)':c}"/>${flag}</g>${nm}</g>`;
+});
+svg+=`<g id="tok" transform="translate(590 360)" style="pointer-events:none"><circle r="5" style="fill:var(--ink)"/></g>`;
+map.innerHTML=svg;
+const tok=document.getElementById('tok'),sts=[...map.querySelectorAll('.st')];
+
+function legend(){
+ const L=document.getElementById('legend');
+ L.innerHTML=`<button class="chip" data-l="" aria-pressed="${!filt}">Todas las líneas</button>`+Object.entries(LINES).map(([k,v])=>`<button class="chip" data-l="${k}" aria-pressed="${filt===k}" style="--c:var(${v.c})"><i${v.dash?' class="dash"':''}></i>${v.n}</button>`).join('');
+}
+function applyFilter(){
+ map.classList.toggle('dim',!!filt);
+ map.querySelectorAll('.ln,.st').forEach(e=>e.classList.toggle('on',e.dataset.l===filt));
+ legend();
+}
+function show(i){
+ cur=(i+S.length)%S.length;const s=S[cur];seen.add(s.id);save();
+ sts.forEach((g,j)=>{g.classList.toggle('sel',j===cur);g.classList.toggle('seen',seen.has(S[j].id))});
+ tok.setAttribute('transform',`translate(${s.x} ${s.y})`);
+ const box=map.parentElement;if(box.scrollWidth>box.clientWidth){box.scrollTo({left:s.x/1200*map.clientWidth-box.clientWidth/2,behavior:reduce?'auto':'smooth'})}
+ panel.style.setProperty('--c',col(s.l));
+ const ln0=LINES[s.l].n.split(' · ')[0],kick=s.k.startsWith(ln0)?s.k:LINES[s.l].n+' · '+s.k;
+ panel.innerHTML=`<span class="meta">${esc(kick)} · ${cur+1}/${S.length}</span><h2>${esc(s.t)}</h2><p>${mk(s.b)}</p>`+
+ (EJ[s.id]?`<div class="blk"><div class="meta">Ejemplo · ${esc(EJ[s.id][0])}</div>${mk(EJ[s.id][1])}</div>`:'')+
+ (s.trap?`<div class="blk trapbox"><div class="meta">Error de la conferencia</div>${mk(s.trap)}</div>`:'')+
+ `<ul>${s.src.map(x=>`<li class="src">${esc(x)}</li>`).join('')}</ul>`+(LNK[s.id]?`<div class="meta">Fuentes para comprobar</div><ul class="links">${LNK[s.id].map(lk).join('')}</ul>`:'')+
+ `<div class="qa"><div class="meta">Pregunta de control</div>${mk(s.q)}<p id="ans" hidden>${mk(s.a)}</p><button class="btn ghost small" id="rev" aria-expanded="false">Ver respuesta</button></div>`+
+ `<div class="nav"><button class="btn ghost" id="prev">Anterior</button><button class="btn" id="next">Siguiente estación</button><div class="meter" aria-hidden="true"><span style="width:${seen.size/S.length*100}%"></span></div><span class="meta count">${seen.size} de ${S.length} vistas</span></div>`;
+ document.getElementById('prev').onclick=()=>show(cur-1);
+ document.getElementById('next').onclick=()=>show(cur+1);
+ document.getElementById('rev').onclick=e=>{const a=document.getElementById('ans');a.hidden=!a.hidden;e.target.textContent=a.hidden?'Ver respuesta':'Ocultar respuesta';e.target.setAttribute('aria-expanded',String(!a.hidden))};
+ try{if(location.hash!=='#'+s.id)history.replaceState(null,'','#'+s.id)}catch(e){}
+}
+map.addEventListener('click',e=>{const g=e.target.closest('.st');if(g)show(+g.dataset.i)});
+map.addEventListener('keydown',e=>{const g=e.target.closest('.st');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();show(+g.dataset.i)}});
+document.getElementById('legend').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filt=b.dataset.l||null;applyFilter();const f=filt&&S.findIndex(s=>s.l===filt);if(filt&&f>=0)show(f)});
+document.addEventListener('keydown',e=>{if(e.target.closest('input,textarea,button'))return;if(e.key==='ArrowRight')show(cur+1);if(e.key==='ArrowLeft')show(cur-1)});
+
+const byId=Object.fromEntries(S.map((x,i)=>[x.id,i]));
+const jump=id=>{filt=null;applyFilter();show(byId[id]);map.closest('section').scrollIntoView({behavior:reduce?'auto':'smooth'})};
+const CB=document.getElementById('cases');
+CB.innerHTML=CASES.map((c,i)=>`<article class="case"><span class="meta">${esc(c.k)}</span><h3>${esc(c.t)}</h3><p>${mk(c.s)}</p><p class="q">${mk(c.q)}</p>${c.src?`<p class="srcs">${esc(c.lab||'Fuentes para comprobar')}: ${c.src.map(an).join(' · ')}</p>`:''}<button class="btn ghost small" data-c="${i}" aria-expanded="false">Ver análisis</button><div class="an" id="an${i}" hidden><p>${mk(c.a)}</p></div><div class="goto">${c.st.map(id=>`<button data-go="${id}" style="--c:${col(S[byId[id]].l)}">${esc(S[byId[id]].t)}</button>`).join('')}</div></article>`).join('');
+CB.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.c!==undefined){const a=document.getElementById('an'+b.dataset.c);a.hidden=!a.hidden;b.textContent=a.hidden?'Ver análisis':'Ocultar análisis';b.setAttribute('aria-expanded',String(!a.hidden))}else if(b.dataset.go){jump(b.dataset.go)}});
+document.querySelector('#real tbody').innerHTML=REAL.map(r=>`<tr><td data-l="Fecha">${esc(r.f)}</td><td data-l="Caso"><b>${esc(r.t)}</b></td><td data-l="Qué pasó">${mk(r.s)}</td><td data-l="Dónde comprobarlo">${r.l.map(an).join('')}<div class="goto">${r.st.map(id=>`<button data-go="${id}" style="--c:${col(S[byId[id]].l)}">${esc(S[byId[id]].t)}</button>`).join('')}</div></td></tr>`).join('');
+document.getElementById('real').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.go)jump(b.dataset.go)});
+document.getElementById('errs').innerHTML=ERRS.map(r=>`<li><span class="said trap">${esc(r[0])}</span><span class="hecho">${esc(r[1])}</span> <span class="src">${esc(r[2])}</span></li>`).join('');
+document.querySelector('#cmp tbody').innerHTML=CMP.map(r=>`<tr><th>${esc(r[0])}</th>${r.slice(1).map((c,j)=>`<td class="c${j+1}" data-l="${['Salida 1','Salida 2','Línea de Arendt'][j]}">${mk(c)}</td>`).join('')}</tr>`).join('');
+
+const hi=document.getElementById('hi');
+hi.querySelector('.hi-toggle').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;hi.dataset.mode=b.dataset.m;hi.querySelectorAll('.hi-toggle button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)))});
+const one=document.getElementById('one'),fr=one.querySelector('.one-frag');
+fr.addEventListener('click',()=>{const o=one.classList.toggle('open');fr.setAttribute('aria-expanded',String(o))});
+const sm=document.getElementById('seams'),sb=document.getElementById('seams-btn');
+sb.addEventListener('click',()=>{const o=sm.classList.toggle('open');sb.setAttribute('aria-pressed',String(o));sb.textContent=o?'Ocultar costuras':'Ver costuras'});
+
+if('IntersectionObserver' in window&&!reduce){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{rootMargin:'0px 0px -10% 0px'});document.querySelectorAll('h2.rv').forEach(h=>io.observe(h))}else document.querySelectorAll('h2.rv').forEach(h=>h.classList.add('in'));
+
+applyFilter();
+const h=location.hash.slice(1),hix=ORDER.indexOf(h);
+show(hix>=0?hix:ORDER.indexOf('nudo'));
+window.addEventListener('hashchange',()=>{const k=ORDER.indexOf(location.hash.slice(1));if(k>=0&&k!==cur)show(k)});
+}
+</script>
+</body>
+</html>
